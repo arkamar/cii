@@ -26,5 +26,5 @@ LDFLAGS = -s ${LIBS}
 #LDFLAGS = ${LIBS}
 
 # compiler and linker
-CC = clang
+CC = cc
 
