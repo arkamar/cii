@@ -1,0 +1,22 @@
+cii - colorize irc it
+=====================
+
+This small program colorize an output of ii[1] connected to bitlbee[2]. It also
+filters out join status lines.
+
+Building
+--------
+
+To build cii simply type make. You may want change config.mk depending on your
+system.
+
+Running cii
+-----------
+
+Simply put ii out file to standard input of cii.
+
+Without any parameter it sets user name from the system as a nick.
+Only one parameter is allowed and it sets the nick.
+
+[1] http://tools.suckless.org/ii/
+[2] https://www.bitlbee.org/
