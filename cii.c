@@ -51,6 +51,7 @@ main(int argc, char *argv[]) {
 	FILE *fp = stdin;
 	static char *buf = NULL;
 	static size_t size = 0;
+	int channel = 0;
 	nick = getenv("USER");
 	/* TODO: add parameter for private chat (without colons) */
 	/* TODO: read from file */
@@ -75,7 +76,7 @@ main(int argc, char *argv[]) {
 			const colors *color = get_type(ob + 1);
 			*cb = *ob = '\0';
 			printf("%s%s<%s>", buf, color->cs, ob + 1);
-			if (col) {
+			if (col && !channel) {
 				*col = '\0';
 				printf("%s%s%s:%s", color->ce, cb + 1, colorreset, col + 1);
 			} else {
