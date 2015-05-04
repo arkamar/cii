@@ -31,7 +31,7 @@ static const colors color[] = {
 
 static void
 usage(void) {
-	fprintf(stderr, "usage: %s [nick]\n", argv0);
+	fprintf(stderr, "usage: %s [-c] [-n nick]\n", argv0);
 	exit(1);
 }
 
@@ -47,21 +47,33 @@ get_type(const char *str) {
 
 int
 main(int argc, char *argv[]) {
-	argv0 = argv[0];
 	FILE *fp = stdin;
 	static char *buf = NULL;
 	static size_t size = 0;
 	int channel = 0;
 	nick = getenv("USER");
-	/* TODO: add parameter for private chat (without colons) */
-	/* TODO: read from file */
-	if (argc == 2)
-		nick = argv[1];
+	for (argv0 = argv[0], argv++, argc--; argv[0] && argv[0][1] && argv[0][0] == '-'; argv++, argc--) {
+		char * arg = argv[0];
+		for (arg++; arg[0]; arg++) {
+			switch (arg[0]) {
+				case 'c': ; channel = 1; break;
+				case 'n':
+					if (arg[1] != '\0' || !argv[1])
+						usage();
+					argv++;
+					argc--;
+					nick = argv[0];
+					break;
+				default: usage(); break;
+			}
+		}
+	}
 	if (!strlen(nick)) {
 		fprintf(stderr, "Error: nick name size\n");
-		exit(1);
+		usage();
 	}
-	if (argc > 2)
+	/* TODO: read from file */
+	if (argc > 0)
 		usage();
 
 	while (getline(&buf, &size, fp) > 0) {
