@@ -52,7 +52,7 @@ main(int argc, char *argv[]) {
 	static char *buf = NULL;
 	static size_t size = 0;
 	nick = getenv("USER");
-	/* TODO: add parameter for private chate (withou colons) */
+	/* TODO: add parameter for private chat (without colons) */
 	/* TODO: read from file */
 	if (argc == 2)
 		nick = argv[1];
