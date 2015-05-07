@@ -96,5 +96,6 @@ main(int argc, char *argv[]) {
 			}
 		}
 	}
+	free(buf);
 	return EXIT_SUCCESS;
 }
