@@ -9,13 +9,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "arg.h"
+
 typedef struct colors colors;
 struct colors {
 	char *cs;
 	char *ce;
 };
 
-static char *argv0;
+char *argv0;
 static char *nick = NULL;
 static char colorother[]   = "\x1b[1;31m";
 static char colorrootend[] = "\x1b[0;32m";
@@ -51,28 +53,22 @@ main(int argc, char *argv[]) {
 	static char *buf = NULL;
 	static size_t size = 0;
 	int channel = 0;
+
 	nick = getenv("USER");
-	for (argv0 = argv[0], argv++, argc--; argv[0] && argv[0][1] && argv[0][0] == '-'; argv++, argc--) {
-		char * arg = argv[0];
-		for (arg++; arg[0]; arg++) {
-			switch (arg[0]) {
-				case 'c': ; channel = 1; break;
-				case 'n':
-					if (arg[1] != '\0' || !argv[1])
-						usage();
-					argv++;
-					argc--;
-					nick = argv[0];
-					break;
-				default: usage(); break;
-			}
-		}
-	}
+
+	ARGBEGIN {
+	case 'c': channel = 1; break;
+	case 'n':
+		nick = EARGF(usage());
+		break;
+	default: usage(); break;
+	} ARGEND;
+
 	if (!strlen(nick)) {
 		fprintf(stderr, "Error: nick name size\n");
 		usage();
 	}
-	/* TODO: read from file */
+
 	if (argc > 0)
 		usage();
 
