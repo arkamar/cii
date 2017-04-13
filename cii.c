@@ -33,7 +33,7 @@ static const colors color[] = {
 
 static void
 usage(void) {
-	fprintf(stderr, "usage: %s [-c] [-n nick]\n", argv0);
+	fprintf(stderr, "usage: %s [-cj] [-n nick]\n", argv0);
 	exit(1);
 }
 
@@ -52,16 +52,24 @@ main(int argc, char *argv[]) {
 	FILE *fp = stdin;
 	static char *buf = NULL;
 	static size_t size = 0;
-	int channel = 0;
+	int channel = 0, join = 0;
+	char * ob;
 
 	nick = getenv("USER");
 
 	ARGBEGIN {
-	case 'c': channel = 1; break;
+	case 'c':
+		channel = 1;
+		break;
+	case 'j':
+		join = 1;
+		break;
 	case 'n':
 		nick = EARGF(usage());
 		break;
-	default: usage(); break;
+	default:
+		usage();
+		break;
 	} ARGEND;
 
 	if (!strlen(nick)) {
@@ -75,7 +83,12 @@ main(int argc, char *argv[]) {
 	while (getline(&buf, &size, fp) > 0) {
 		char *cb = NULL;
 		char *col = NULL;
-		char *ob = strchr(buf, '<');
+		if (join && (ob = strstr(buf, "-!-"))) {
+			*ob = '\0';
+			printf("%s%s-!-%s%s", buf, colornick, colorreset, ob + 3);
+			continue;
+		}
+		ob = strchr(buf, '<');
 		if (ob) {
 			cb = strchr(ob + 1, '>');
 			if (!cb)
