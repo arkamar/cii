@@ -75,12 +75,12 @@ main(int argc, char *argv[]) {
 	while (getline(&buf, &size, fp) > 0) {
 		char *cb = NULL;
 		char *col = NULL;
-		char *ob = strstr(buf, "<");
+		char *ob = strchr(buf, '<');
 		if (ob) {
-			cb = strstr(ob + 1, ">");
+			cb = strchr(ob + 1, '>');
 			if (!cb)
 				continue;
-			col = strstr(cb + 1, ":");
+			col = strchr(cb + 1, ':');
 			const colors *color = get_type(ob + 1);
 			*cb = *ob = '\0';
 			printf("%s%s<%s>", buf, color->cs, ob + 1);
