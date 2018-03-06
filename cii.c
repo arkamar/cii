@@ -8,8 +8,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "arg.h"
+
+#define TIME_FMT "%F %T"
 
 typedef struct colors colors;
 struct colors {
@@ -83,9 +86,12 @@ main(int argc, char *argv[]) {
 	while (getline(&buf, &size, fp) > 0) {
 		char *cb = NULL;
 		char *col = NULL;
+		time_t timestamp = strtoul(buf, NULL, 0);
+		char tbuf[32];
 		if (join && (ob = strstr(buf, "-!-"))) {
 			*ob = '\0';
-			printf("%s%s-!-%s%s", buf, colornick, colorreset, ob + 3);
+			strftime(tbuf, sizeof tbuf, TIME_FMT, localtime(&timestamp));
+			printf("%s %s-!-%s%s", tbuf, colornick, colorreset, ob + 3);
 			continue;
 		}
 		ob = strchr(buf, '<');
@@ -96,7 +102,8 @@ main(int argc, char *argv[]) {
 			col = strchr(cb + 1, ':');
 			const colors *color = get_type(ob + 1);
 			*cb = *ob = '\0';
-			printf("%s%s<%s>", buf, color->cs, ob + 1);
+			strftime(tbuf, sizeof tbuf, TIME_FMT, localtime(&timestamp));
+			printf("%s %s<%s>", tbuf, color->cs, ob + 1);
 			if (col && !channel) {
 				*col = '\0';
 				printf("%s%s%s:%s", color->ce, cb + 1, colorreset, col + 1);
