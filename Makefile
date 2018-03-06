@@ -5,7 +5,7 @@ include config.mk
 SRC = ${NAME}.c
 OBJ = ${SRC:.c=.o}
 
-all: options ${NAME}
+all: options ${NAME} ut2lt
 
 options:
 	@echo ${NAME} build options:
