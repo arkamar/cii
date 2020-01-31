@@ -2,7 +2,22 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "arg.h"
+
 #define TIME_FMT "%F %T"
+
+char * argv0;
+
+static
+void
+usage() {
+	fputs(
+		"ut2lt -h\n"
+		"\n"
+		"   -h print this help\n",
+		stdout);
+	exit(0);
+}
 
 int
 main(int argc, char * argv[]) {
@@ -11,6 +26,11 @@ main(int argc, char * argv[]) {
 	time_t timestmap;
 	char tbuf[32];
 	char * endptr;
+
+	ARGBEGIN {
+	default:
+		usage();
+	} ARGEND;
 
 	while (getline(&buf, &size, stdin) > 0) {
 		timestmap = strtoul(buf, &endptr, 0);
