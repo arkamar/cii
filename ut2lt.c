@@ -17,6 +17,7 @@ main(int argc, char * argv[]) {
 		strftime(tbuf, sizeof tbuf, TIME_FMT, localtime(&timestmap));
 		fputs(tbuf, stdout);
 		fputs(endptr, stdout);
+		fflush(stdout);
 	}
 
 	free(buf);
