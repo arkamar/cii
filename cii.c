@@ -84,32 +84,38 @@ main(int argc, char *argv[]) {
 		usage();
 
 	while (getline(&buf, &size, fp) > 0) {
-		char *cb = NULL;
-		char *col = NULL;
-		time_t timestamp = strtoul(buf, NULL, 0);
-		char tbuf[32];
-		if (join && (ob = strstr(buf, "-!-"))) {
-			*ob = '\0';
-			strftime(tbuf, sizeof tbuf, TIME_FMT, localtime(&timestamp));
-			printf("%s %s-!-%s%s", tbuf, colornick, colorreset, ob + 3);
-			continue;
-		}
-		ob = strchr(buf, '<');
-		if (ob) {
-			cb = strchr(ob + 1, '>');
-			if (!cb)
+		char *endptr = NULL;
+		time_t timestamp = strtoul(buf, &endptr, 0);
+		if (endptr != buf) {
+			char *cb = NULL;
+			char *col = NULL;
+			char tbuf[32];
+			if (join && (ob = strstr(buf, "-!-"))) {
+				*ob = '\0';
+				strftime(tbuf, sizeof tbuf, TIME_FMT, localtime(&timestamp));
+				printf("%s %s-!-%s%s", tbuf, colornick, colorreset, ob + 3);
 				continue;
-			col = strchr(cb + 1, ':');
-			const colors *color = get_type(ob + 1);
-			*cb = *ob = '\0';
-			strftime(tbuf, sizeof tbuf, TIME_FMT, localtime(&timestamp));
-			printf("%s %s<%s>", tbuf, color->cs, ob + 1);
-			if (col && !channel) {
-				*col = '\0';
-				printf("%s%s%s:%s", color->ce, cb + 1, colorreset, col + 1);
-			} else {
-				printf("%s%s", colorreset, cb + 1);
 			}
+			ob = strchr(buf, '<');
+			if (ob) {
+				cb = strchr(ob + 1, '>');
+				if (!cb)
+					continue;
+				col = strchr(cb + 1, ':');
+				const colors *color = get_type(ob + 1);
+				*cb = *ob = '\0';
+				strftime(tbuf, sizeof tbuf, TIME_FMT, localtime(&timestamp));
+				printf("%s %s<%s>", tbuf, color->cs, ob + 1);
+				if (col && !channel) {
+					*col = '\0';
+					printf("%s%s%s:%s", color->ce, cb + 1, colorreset, col + 1);
+				} else {
+					printf("%s%s", colorreset, cb + 1);
+				}
+			}
+		} else {
+			fputs(buf, stdout);
+			fflush(stdout);
 		}
 	}
 	free(buf);
