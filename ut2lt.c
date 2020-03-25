@@ -34,8 +34,10 @@ main(int argc, char * argv[]) {
 
 	while (getline(&buf, &size, stdin) > 0) {
 		timestmap = strtoul(buf, &endptr, 0);
-		strftime(tbuf, sizeof tbuf, TIME_FMT, localtime(&timestmap));
-		fputs(tbuf, stdout);
+		if (endptr != buf) {
+			strftime(tbuf, sizeof tbuf, TIME_FMT, localtime(&timestmap));
+			fputs(tbuf, stdout);
+		}
 		fputs(endptr, stdout);
 		fflush(stdout);
 	}
